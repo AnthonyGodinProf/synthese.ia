@@ -76,77 +76,77 @@
 
 
    <script>
-       // Data for the AI tools, based on the provided table
+       // Data for the AI tools, based on the latest information
        const aiTools = [
            {
                name: "ChatGPT",
                specialty: "Chatbot polyvalent et créatif",
                usages: "Conversation, rédaction, brainstorming, analyse de données, assistance au code.",
                imageGen: { status: true, detail: "via DALL-E 3" },
-               fileRead: { status: true, detail: "depuis image ou upload de fichier" },
-               codeGen: { status: true, detail: "Génère des blocs de code, des sites simples" },
-               exportDoc: { status: false, detail: "Copier-coller texte/Markdown" },
+               fileRead: { status: true, detail: "depuis image ou upload" },
+               codeGen: { status: true, detail: "Génère blocs de code" },
+               exportDoc: { status: false, detail: "Copier-coller" },
                limits: "Hallucinations, pas d'export direct, ne peut pas compiler ou déployer une application."
            },
            {
                name: "Gemini",
                specialty: "Chatbot multimodal intégré à Google",
-               usages: "Recherche, analyse d'images/graphiques, planification de voyage, assistance au code.",
-               imageGen: { status: true, detail: "via Imagen 2" },
-               fileRead: { status: true, detail: "Natif, intégration avec Google Workspace" },
-               codeGen: { status: true, detail: "Intégration avec Google Colab" },
-               exportDoc: { status: true, detail: "Vers Google Docs & Sheets" },
-               limits: "Hallucinations, questions de confidentialité liées à l'écosystème Google."
+               usages: "Recherche, analyse d'images/graphiques, planification, assistance au code, intégration profonde avec Android (SMS, emails).",
+               imageGen: { status: true, detail: "via Imagen 3" },
+               fileRead: { status: true, detail: "Natif, Google Workspace" },
+               codeGen: { status: true, detail: "Intégration Colab & Replit" },
+               exportDoc: { status: true, detail: "vers Google Docs/Sheets" },
+               limits: "Hallucinations, questions de confidentialité avec l'accès aux données personnelles."
            },
            {
                name: "Mistral",
                specialty: "Alternative européenne, efficace et open-source",
-               usages: "Conversation, génération de code très performante, utilisation en entreprise (modèles privés).",
-               imageGen: { status: false, detail: "" },
-               fileRead: { status: false, detail: "" },
-               codeGen: { status: true, detail: "Très apprécié des développeurs" },
+               usages: "Conversation, génération de code, génération/analyse d'images, modèles de raisonnement ('Magistral').",
+               imageGen: { status: true, detail: "via modèles partenaires (Flux)" },
+               fileRead: { status: true, detail: "Analyse via modèles Pixtral (OCR)" },
+               codeGen: { status: true, detail: "Très apprécié des devs" },
                exportDoc: { status: false, detail: "Copier-coller" },
-               limits: "Moins de fonctionnalités multimédia, interface plus sobre, pas d'analyse de fichiers."
+               limits: "Écosystème d'intégrations moins développé que les concurrents américains."
            },
            {
                name: "Perplexity",
-               specialty: "\"Moteur de réponse\" factuel et sourcé",
-               usages: "Recherche académique/professionnelle, veille informationnelle, trouver des solutions de code existantes.",
+               specialty: "\"Moteur de réponse\" factuel et créateur d'outils",
+               usages: "Recherche académique/pro, veille. Avec le plan 'Max' : création d'apps, dashboards, etc.",
                imageGen: { status: false, detail: "" },
-               fileRead: { status: false, detail: "" },
-               codeGen: { status: false, detail: "Trouve et cite du code, ne le génère pas" },
+               fileRead: { status: true, detail: "Analyse de fichiers pour la recherche" },
+               codeGen: { status: false, detail: "Trouve et cite, ne génère pas" },
                exportDoc: { status: false, detail: "Copier-coller" },
-               limits: "Pas de création de contenu original (texte, image, code), style très factuel et sec."
+               limits: "La création d'outils est une fonctionnalité Pro/Max. Moins orienté conversationnel."
            },
            {
                name: "NotebookLM",
                specialty: "Assistant de recherche pour VOS documents",
-               usages: "Analyser et synthétiser des documents (PDF, Docs), trouver des liens entre des sources, expliquer du code.",
+               usages: "Analyser et synthétiser des documents, créer des résumés audio ('Audio Overviews'), générer des frises chronologiques, des Q&A.",
                imageGen: { status: false, detail: "" },
-               fileRead: { status: true, detail: "Lit le contenu des fichiers uploadés" },
-               codeGen: { status: false, detail: "Analyse le code fourni, ne le génère pas" },
-               exportDoc: { status: false, detail: "Copier-coller" },
+               fileRead: { status: true, detail: "Lit les fichiers uploadés" },
+               codeGen: { status: false, detail: "Analyse le code fourni" },
+               exportDoc: { status: true, detail: "Copier vers Docs, exporter via outils tiers" },
                limits: "Connaissance limitée aux documents fournis, pas de création \"ex nihilo\"."
            },
            {
                name: "Gamma.app",
                specialty: "Créateur de présentations par IA",
-               usages: "Créer des présentations, des documents et des pages web à partir d'un simple prompt.",
-               imageGen: { status: true, detail: "Génère des images d'illustration intégrées" },
+               usages: "Créer des présentations, documents et pages web à partir d'un prompt. Analytiques d'engagement.",
+               imageGen: { status: true, detail: "Images d'illustration" },
                fileRead: { status: false, detail: "" },
                codeGen: { status: false, detail: "" },
-               exportDoc: { status: true, detail: "PDF, PowerPoint .pptx" },
+               exportDoc: { status: true, detail: "PDF, PPTX, poster sur LinkedIn" },
                limits: "Personnalisation du design limitée, contenu textuel à vérifier."
            },
            {
                name: "ElevenLabs",
                specialty: "Spécialiste de la génération vocale",
-               usages: "Voix off, livres audio, podcasts, clonage de voix pour le doublage ou l'accessibilité.",
+               usages: "Voix off, livres audio, clonage de voix, création de voix par prompt (Voice Design v3), doublage et traduction audio.",
                imageGen: { status: false, detail: "" },
                fileRead: { status: false, detail: "" },
                codeGen: { status: false, detail: "" },
                exportDoc: { status: true, detail: "Fichiers audio .mp3" },
-               limits: "Risques éthiques (deepfakes), coût pour un usage intensif, authenticité parfois perfectible."
+               limits: "Risques éthiques (deepfakes), coût pour un usage intensif, le clonage requiert un abonnement."
            }
        ];
 
