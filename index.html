@@ -1,0 +1,261 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Infographie Interactive des Outils d'IA</title>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+   <style>
+       body {
+           font-family: 'Inter', sans-serif;
+           background-color: #f0f4f8;
+       }
+       /* Custom scrollbar for modal content */
+       .modal-content::-webkit-scrollbar {
+           width: 8px;
+       }
+       .modal-content::-webkit-scrollbar-track {
+           background: #f1f1f1;
+           border-radius: 10px;
+       }
+       .modal-content::-webkit-scrollbar-thumb {
+           background: #888;
+           border-radius: 10px;
+       }
+       .modal-content::-webkit-scrollbar-thumb:hover {
+           background: #555;
+       }
+       .tool-card {
+           transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+       }
+       .tool-card:hover {
+           transform: translateY(-5px);
+           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+       }
+   </style>
+</head>
+<body class="antialiased">
+
+
+   <div class="container mx-auto p-4 md:p-8">
+       <header class="text-center mb-8 md:mb-12">
+           <h1 class="text-3xl md:text-5xl font-bold text-gray-800">Comparatif Interactif des Outils d'IA</h1>
+           <p class="text-gray-600 mt-2 text-lg">Cliquez sur un outil pour découvrir ses forces et ses faiblesses (Juillet 2025)</p>
+       </header>
+
+
+       <!-- Grid for the tool cards -->
+       <div id="tools-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
+           <!-- Tool cards will be inserted here by JavaScript -->
+       </div>
+   </div>
+
+
+   <!-- Modal Structure -->
+   <div id="tool-modal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50 hidden">
+       <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col transform transition-all duration-300 scale-95 opacity-0">
+           <!-- Modal Header -->
+           <div class="flex justify-between items-center p-5 border-b border-gray-200">
+               <div>
+                   <h2 id="modal-title" class="text-2xl font-bold text-gray-900"></h2>
+                   <p id="modal-specialty" class="text-gray-500 italic"></p>
+               </div>
+               <button id="close-modal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                   <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+               </button>
+           </div>
+
+
+           <!-- Modal Content -->
+           <div id="modal-content" class="p-6 space-y-5 overflow-y-auto modal-content">
+               <!-- Details will be populated here -->
+           </div>
+       </div>
+   </div>
+
+
+   <script>
+       // Data for the AI tools, based on the provided table
+       const aiTools = [
+           {
+               name: "ChatGPT",
+               specialty: "Chatbot polyvalent et créatif",
+               usages: "Conversation, rédaction, brainstorming, analyse de données, assistance au code.",
+               imageGen: { status: true, detail: "via DALL-E 3" },
+               fileRead: { status: true, detail: "depuis image ou upload de fichier" },
+               codeGen: { status: true, detail: "Génère des blocs de code, des sites simples" },
+               exportDoc: { status: false, detail: "Copier-coller texte/Markdown" },
+               limits: "Hallucinations, pas d'export direct, ne peut pas compiler ou déployer une application."
+           },
+           {
+               name: "Gemini",
+               specialty: "Chatbot multimodal intégré à Google",
+               usages: "Recherche, analyse d'images/graphiques, planification de voyage, assistance au code.",
+               imageGen: { status: true, detail: "via Imagen 2" },
+               fileRead: { status: true, detail: "Natif, intégration avec Google Workspace" },
+               codeGen: { status: true, detail: "Intégration avec Google Colab" },
+               exportDoc: { status: true, detail: "Vers Google Docs & Sheets" },
+               limits: "Hallucinations, questions de confidentialité liées à l'écosystème Google."
+           },
+           {
+               name: "Mistral",
+               specialty: "Alternative européenne, efficace et open-source",
+               usages: "Conversation, génération de code très performante, utilisation en entreprise (modèles privés).",
+               imageGen: { status: false, detail: "" },
+               fileRead: { status: false, detail: "" },
+               codeGen: { status: true, detail: "Très apprécié des développeurs" },
+               exportDoc: { status: false, detail: "Copier-coller" },
+               limits: "Moins de fonctionnalités multimédia, interface plus sobre, pas d'analyse de fichiers."
+           },
+           {
+               name: "Perplexity",
+               specialty: "\"Moteur de réponse\" factuel et sourcé",
+               usages: "Recherche académique/professionnelle, veille informationnelle, trouver des solutions de code existantes.",
+               imageGen: { status: false, detail: "" },
+               fileRead: { status: false, detail: "" },
+               codeGen: { status: false, detail: "Trouve et cite du code, ne le génère pas" },
+               exportDoc: { status: false, detail: "Copier-coller" },
+               limits: "Pas de création de contenu original (texte, image, code), style très factuel et sec."
+           },
+           {
+               name: "NotebookLM",
+               specialty: "Assistant de recherche pour VOS documents",
+               usages: "Analyser et synthétiser des documents (PDF, Docs), trouver des liens entre des sources, expliquer du code.",
+               imageGen: { status: false, detail: "" },
+               fileRead: { status: true, detail: "Lit le contenu des fichiers uploadés" },
+               codeGen: { status: false, detail: "Analyse le code fourni, ne le génère pas" },
+               exportDoc: { status: false, detail: "Copier-coller" },
+               limits: "Connaissance limitée aux documents fournis, pas de création \"ex nihilo\"."
+           },
+           {
+               name: "Gamma.app",
+               specialty: "Créateur de présentations par IA",
+               usages: "Créer des présentations, des documents et des pages web à partir d'un simple prompt.",
+               imageGen: { status: true, detail: "Génère des images d'illustration intégrées" },
+               fileRead: { status: false, detail: "" },
+               codeGen: { status: false, detail: "" },
+               exportDoc: { status: true, detail: "PDF, PowerPoint .pptx" },
+               limits: "Personnalisation du design limitée, contenu textuel à vérifier."
+           },
+           {
+               name: "ElevenLabs",
+               specialty: "Spécialiste de la génération vocale",
+               usages: "Voix off, livres audio, podcasts, clonage de voix pour le doublage ou l'accessibilité.",
+               imageGen: { status: false, detail: "" },
+               fileRead: { status: false, detail: "" },
+               codeGen: { status: false, detail: "" },
+               exportDoc: { status: true, detail: "Fichiers audio .mp3" },
+               limits: "Risques éthiques (deepfakes), coût pour un usage intensif, authenticité parfois perfectible."
+           }
+       ];
+
+
+       // DOM Elements
+       const toolsGrid = document.getElementById('tools-grid');
+       const modal = document.getElementById('tool-modal');
+       const modalContent = document.getElementById('modal-content');
+       const modalTitle = document.getElementById('modal-title');
+       const modalSpecialty = document.getElementById('modal-specialty');
+       const closeModalBtn = document.getElementById('close-modal');
+
+
+       // Icons
+       const checkIcon = `<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+       const crossIcon = `<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+
+
+       // Function to create a detail item for the modal
+       function createDetailItem(title, status, detail) {
+           const icon = status ? checkIcon : crossIcon;
+           const detailText = detail ? `<span class="text-gray-500 text-sm ml-2">(${detail})</span>` : '';
+           return `
+               <div class="flex items-center">
+                   ${icon}
+                   <span class="ml-3 text-gray-700 font-medium">${title}</span>
+                   ${detailText}
+               </div>
+           `;
+       }
+      
+       // Populate the grid with tool cards
+       aiTools.forEach(tool => {
+           const card = document.createElement('div');
+           card.className = 'tool-card bg-white p-6 rounded-xl shadow-md cursor-pointer flex flex-col justify-between';
+           card.innerHTML = `
+               <div>
+                   <h3 class="text-xl font-bold text-gray-800">${tool.name}</h3>
+                   <p class="text-gray-500 mt-1 italic">${tool.specialty}</p>
+               </div>
+               <button class="mt-4 text-left text-indigo-600 font-semibold hover:text-indigo-800 transition-colors">Voir les détails →</button>
+           `;
+           card.addEventListener('click', () => openModal(tool));
+           toolsGrid.appendChild(card);
+       });
+
+
+       // Function to open and populate the modal
+       function openModal(tool) {
+           modalTitle.textContent = tool.name;
+           modalSpecialty.textContent = tool.specialty;
+
+
+           modalContent.innerHTML = `
+               <div class="space-y-4">
+                   <div>
+                       <h4 class="font-semibold text-gray-800">Usages Principaux</h4>
+                       <p class="text-gray-600">${tool.usages}</p>
+                   </div>
+                  
+                   <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t">
+                       ${createDetailItem("Génération d'Images", tool.imageGen.status, tool.imageGen.detail)}
+                       ${createDetailItem("Lecture de Fichiers", tool.fileRead.status, tool.fileRead.detail)}
+                       ${createDetailItem("Création de Code", tool.codeGen.status, tool.codeGen.detail)}
+                       ${createDetailItem("Export de Documents", tool.exportDoc.status, tool.exportDoc.detail)}
+                   </div>
+
+
+                   <div>
+                       <h4 class="font-semibold text-gray-800 pt-4 border-t">Limites Clés</h4>
+                       <p class="text-gray-600">${tool.limits}</p>
+                   </div>
+               </div>
+           `;
+
+
+           modal.classList.remove('hidden');
+           // Trigger transition
+           setTimeout(() => {
+               modal.querySelector('.transform').classList.remove('scale-95', 'opacity-0');
+           }, 10);
+       }
+
+
+       // Function to close the modal
+       function closeModal() {
+           modal.querySelector('.transform').classList.add('scale-95', 'opacity-0');
+           setTimeout(() => {
+               modal.classList.add('hidden');
+           }, 300);
+       }
+
+
+       // Event listeners for closing the modal
+       closeModalBtn.addEventListener('click', closeModal);
+       modal.addEventListener('click', (event) => {
+           if (event.target === modal) {
+               closeModal();
+           }
+       });
+      
+       // Close modal with Escape key
+       document.addEventListener('keydown', (event) => {
+           if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+               closeModal();
+           }
+       });
+
+
+   </script>
+</body>
+</html>
